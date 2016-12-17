@@ -21,6 +21,9 @@ bot.on("message", msg => {
     if(mes === "uptime"){
         msg.channel.sendMessage(bot.uptime / 1000 + "s");
     }
+    if(mes === "rtd"){
+        msg.channel.sendMessage(msg.author.username + " rolled a " + Math.floor(Math.random() * (6 - 1 + 1) + 1));
+    }
     
     if(mes === "help"){
     	msg.channel.sendMessage("```SilverBot was created by arocks124#9318\r\
@@ -28,6 +31,7 @@ bot.on("message", msg => {
     	Commands:\n\
     	fat\n\
         uptime\n\
+        rtd\n\
     	\n\
     	Thanks for using SilverBot!```");
     }
