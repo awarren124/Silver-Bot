@@ -36,6 +36,9 @@ bot.on("message", msg => {
     	Thanks for using SilverBot!```");
     }
 
+    if(mes === "git"){
+        msg.channel.sendMessage("GitHub: https://github.com/awarren124/Silver-Bot");
+    }
     
 });
 
