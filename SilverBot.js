@@ -3,21 +3,16 @@ var bot = new Discord.Client();
 var prefix = "~";
 
 var request = require("request")
-
-var url = "https://jsonplaceholder.typicode.com"
 var authinfo = require("./authinfo.json");
-
 
 bot.on("message", msg => {
 
     if(msg.author.bot) return;  
-    // console.log(msg.content.substring(3).trim().toLowerCase());
-    //msg.channel.id === "254062866682871808" && 
     if (msg.author.username === "Silver Bot") return;
 
     if(!msg.content.startsWith(prefix)) return;
 
-    //msg.content = msg.content.substring(3);//.trim();
+    console.log("message sent in " + msg.channel.guild.name + "\n\"" + msg.content + "\"\n");
 
     mes = msg.content.substring(1).trim().toLowerCase();
     if(mes.startsWith("weather")){
@@ -42,8 +37,24 @@ bot.on("message", msg => {
             }
         });
     }
-    
-    console.log("message sent in " + msg.channel.guild.name + "\n\"" + msg.content + "\"\n");
+
+    if(mes.startsWith("gif")){
+        topic = mes.substring(3).trim();
+        request({
+            url: "http://api.giphy.com/v1/gifs/search?q=" + topic + "&api_key=" + authinfo.keys.giphy,
+            json: true
+        }, function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+                var randInt = -Math.floor(Math.random() * (0 - body.data.length + 1));
+                msg.channel.sendMessage(body.data[randInt].images.original.url);
+            }else{
+                msg.channel.sendMessage("Something went wrong.");
+                console.log("error: " + error + "\n response.statusCode: " + response.statusCode);
+            }
+        });
+    }
+
+
 
     if(mes ===  "fat"){
         msg.channel.sendMessage("esdesign");
@@ -70,6 +81,7 @@ bot.on("message", msg => {
         uptime\n\
         rtd\n\
         weather (~weather <city>)\n\
+        gif (~git <topic>)\n\
         \n\
         Thanks for using SilverBot!```");
     }
