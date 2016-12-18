@@ -57,6 +57,10 @@ bot.on("message", msg => {
         });
     }
 
+    if(mes.startsWith("echo")){
+        msg.channel.sendMessage(msg.content.substring(5).trim());
+    }
+
     if(mes.startsWith("urban")){
         topic = mes.substring(5).trim();
         unirest.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=" + topic)
@@ -64,7 +68,11 @@ bot.on("message", msg => {
         .header("Accept", "text/plain")
         .end(function (result) {
             if(result.body.list.length !== 0){
-                msg.channel.sendMessage(result.body.list[0].definition + "\n\n" + "*" + result.body.list[0].example + "*");
+                msg.channel.sendMessage("**" + result.body.list[0].word + "** by " + result.body.list[0].author + "\n\n" +
+                                        + result.body.list[0].definition + "\n\n" +
+                                        "*" + result.body.list[0].example + "*\n\n" +
+                                        ":thumbsup:" + result.body.list[0].thumbs_up +
+                                        " : " + ":thumbsdown:" + result.body.list[0].thumbs_down);
             }else{
                 msg.channel.sendMessage("No results found :(");
             }
@@ -97,7 +105,9 @@ bot.on("message", msg => {
         uptime\n\
         rtd\n\
         weather (~weather <city>)\n\
-        gif (~git <topic>)\n\
+        gif (~gif <topic>)\n\
+        urban (~urban <topic>)
+        echo (~echo <phrase>)
         \n\
         Thanks for using SilverBot!```");
     }
