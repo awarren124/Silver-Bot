@@ -4,6 +4,7 @@ var prefix = "~";
 
 var request = require("request")
 var authinfo = require("./authinfo.json");
+var unirest = require("unirest");
 
 bot.on("message", msg => {
 
@@ -56,6 +57,19 @@ bot.on("message", msg => {
         });
     }
 
+    if(mes.startsWith("urban")){
+        topic = mes.substring(5).trim();
+        unirest.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=" + topic)
+        .header("X-Mashape-Key", authinfo.keys.urban)
+        .header("Accept", "text/plain")
+        .end(function (result) {
+            if(result.body.list.length !== 0){
+                msg.channel.sendMessage(result.body.list[0].definition + "\n\n" + "*" + result.body.list[0].example + "*");
+            }else{
+                msg.channel.sendMessage("No results found :(");
+            }
+        });
+    }
 
 
     if(mes ===  "fat"){
