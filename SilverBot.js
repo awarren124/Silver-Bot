@@ -44,9 +44,11 @@ bot.on("message", msg => {
             url: "http://api.giphy.com/v1/gifs/search?q=" + topic + "&api_key=" + authinfo.keys.giphy,
             json: true
         }, function (error, response, body) {
-            if (!error && response.statusCode === 200) {
+            if (!error && response.statusCode === 200 && body.data.length !== 0) {
                 var randInt = -Math.floor(Math.random() * (0 - body.data.length + 1));
                 msg.channel.sendMessage(body.data[randInt].images.original.url);
+            }else if(body.data.length === 0){
+                msg.channel.sendMessage("No gifs found");
             }else{
                 msg.channel.sendMessage("Something went wrong.");
                 console.log("error: " + error + "\n response.statusCode: " + response.statusCode);
