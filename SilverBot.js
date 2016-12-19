@@ -68,11 +68,13 @@ bot.on("message", msg => {
         .header("Accept", "text/plain")
         .end(function (result) {
             if(result.body.list.length !== 0){
-                msg.channel.sendMessage("**" + result.body.list[0].word + "** by " + result.body.list[0].author + "\n\n" +
-                                        + result.body.list[0].definition + "\n\n" +
-                                        "*" + result.body.list[0].example + "*\n\n" +
-                                        ":thumbsup:" + result.body.list[0].thumbs_up +
-                                        " : " + ":thumbsdown:" + result.body.list[0].thumbs_down);
+                var index = -Math.floor(Math.random() * (0 - result.body.list.length + 1));
+                console.log(index);
+                msg.channel.sendMessage("**" + result.body.list[index].word + "** by " + result.body.list[index].author + "\n\n" +
+                                        result.body.list[index].definition + "\n\n" +
+                                        "*" + result.body.list[index].example + "*\n\n" +
+                                        ":thumbsup:" + result.body.list[index].thumbs_up +
+                                        " : " + ":thumbsdown:" + result.body.list[index].thumbs_down);
             }else{
                 msg.channel.sendMessage("No results found :(");
             }
@@ -106,8 +108,8 @@ bot.on("message", msg => {
         rtd\n\
         weather (~weather <city>)\n\
         gif (~gif <topic>)\n\
-        urban (~urban <topic>)
-        echo (~echo <phrase>)
+        urban (~urban <topic>)\n\
+        echo (~echo <phrase>)\n\
         \n\
         Thanks for using SilverBot!```");
     }
