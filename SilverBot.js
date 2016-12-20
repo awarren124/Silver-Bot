@@ -158,6 +158,8 @@ bot.on("message", msg => {
         gif (~gif <topic>)\n\
         urban (~urban <topic>)\n\
         echo (~echo <phrase>)\n\
+        shorten (~shorten <link>)
+        expand (~expand <bit.ly or j.mp link>)
         \n\
         Thanks for using SilverBot!```");
     }
