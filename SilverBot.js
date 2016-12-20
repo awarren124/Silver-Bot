@@ -114,18 +114,22 @@ bot.on("message", msg => {
         });
     }
 
-    if(mes.startsWith("leet")){
-        var phrase = mes.substring(4);
-        unirest.post("https://text-sentiment.p.mashape.com/analyze")
-        .header("X-Mashape-Key", authinfo.keys.mashape)
-        .header("Content-Type", "application/x-www-form-urlencoded")
-        .header("Accept", "application/json")
-        .send("text=" + phrase)
-        .end(function (result) {
-            console.log(result.body);
-            msg.channel.sendMessage(result.body);
-            console.log("text" + result.body[0]);
-            msg.channel.sendMessage("Positive: " + result.body.pos + "Negative: " + result.body.neg_percent + "Mid: " + result.body.mid_percent);
+    if(mes.startsWith("movie")){
+        var title = mes.substring(5).trim();
+        unirest.get("http://www.omdbapi.com/?t=" + title)
+        .end(function(result){
+            if(result.body.Response === "True"){
+                msg.channel.sendMessage("**" + result.body.Title + "**, " + result.body.Year + "\n" +
+                result.body.Genre + "\nDirected by: " + result.body.Director + "\n" +
+                "Actors: " + result.body.Actors + "\n" +
+                "Plot: " + result.body.Plot + "\n" +
+                "Ratings: \n" +
+                "\tMetascore: " + result.body.Metascore + "\n" +
+                "\tIMDB: " + result.body.imdbRating  + "\n" +
+                result.body.Poster);
+            }else{
+                msg.channel.sendMessage("Movie not found :(");
+            }
         });
     }
 
@@ -159,6 +163,7 @@ bot.on("message", msg => {
         echo (~echo <phrase>)\n\
         shorten (~shorten <link>)\n\
         expand (~expand <bit.ly or j.mp link>)\n\
+        movie (~movie <title>)\n\
         \n\
         Thanks for using SilverBot!```");
     }
