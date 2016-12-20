@@ -14,7 +14,6 @@ bot.on("message", msg => {
     if(!msg.content.startsWith(prefix)) return;
 
     console.log("message sent in " + msg.channel.guild.name + "\n\"" + msg.content + "\"\n");
-
     mes = msg.content.substring(1).trim().toLowerCase();
     if(mes.startsWith("weather")){
         var city = mes.substring(7).trim();
@@ -57,6 +56,41 @@ bot.on("message", msg => {
         });
     }
 
+    if(mes.startsWith("shorten")){
+        var longURL = msg.content.substring(8).trim();
+        if(!longURL.startsWith("http")){
+            longURL = "http://" + longURL;
+        }
+        unirest.get("http://api.bit.ly/v3/shorten?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&longUrl=" + longURL)
+        .header("Accept", "application/json")
+        .end(function (result) {
+            console.log("http://api.bit.ly/v3/shorten?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&longUrl=" + longURL);
+            msg.channel.sendMessage(result.body.status_txt);
+            if(result.body.status_txt === "INVALID_URI"){
+                msg.sendMessage("The URL you entered is invalid.");
+            }else{
+                msg.channel.sendMessage(result.body.data.url);
+            }
+        });
+    }
+
+    if(mes.startsWith("expand")){
+        var shortURL = msg.content.substring(7).trim();
+        if(!shortURL.startsWith("http")){
+            shortURL = "http://" + shortURL;
+        }
+        unirest.get("http://api.bit.ly/v3/expand?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&shortUrl=" + shortURL)
+        .header("Accept", "application/json")
+        .end(function (result) {
+            console.log("http://api.bit.ly/v3/expand?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&shortUrl=" + shortURL);
+            if(result.body.data.expand[0].hasOwnProperty("error")){
+                msg.channel.sendMessage("The URL you entered is invalid. Make sure it starts with bit.ly, or j.mp")
+            }else{
+                msg.channel.sendMessage(result.body.data.expand[0].long_url);
+            }
+        });
+    }
+
     if(mes.startsWith("echo")){
         msg.channel.sendMessage(msg.content.substring(5).trim());
     }
@@ -64,7 +98,7 @@ bot.on("message", msg => {
     if(mes.startsWith("urban")){
         topic = mes.substring(5).trim();
         unirest.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=" + topic)
-        .header("X-Mashape-Key", authinfo.keys.urban)
+        .header("X-Mashape-Key", authinfo.keys.mashape)
         .header("Accept", "text/plain")
         .end(function (result) {
             if(result.body.list.length !== 0){
@@ -81,6 +115,20 @@ bot.on("message", msg => {
         });
     }
 
+    if(mes.startsWith("leet")){
+        var phrase = mes.substring(4);
+        unirest.post("https://text-sentiment.p.mashape.com/analyze")
+        .header("X-Mashape-Key", authinfo.keys.mashape)
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .header("Accept", "application/json")
+        .send("text=" + phrase)
+        .end(function (result) {
+            console.log(result.body);
+            msg.channel.sendMessage(result.body);
+            console.log("text" + result.body[0]);
+            msg.channel.sendMessage("Positive: " + result.body.pos + "Negative: " + result.body.neg_percent + "Mid: " + result.body.mid_percent);
+        });
+    }
 
     if(mes ===  "fat"){
         msg.channel.sendMessage("esdesign");
@@ -128,5 +176,4 @@ bot.on("guildMemberAdd", (member) => {
 bot.on('ready', () => {
     console.log('I am ready!');
 });
-
 bot.login(authinfo.keys.discord);
