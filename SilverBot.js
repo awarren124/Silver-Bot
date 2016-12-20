@@ -65,7 +65,6 @@ bot.on("message", msg => {
         .header("Accept", "application/json")
         .end(function (result) {
             console.log("http://api.bit.ly/v3/shorten?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&longUrl=" + longURL);
-            msg.channel.sendMessage(result.body.status_txt);
             if(result.body.status_txt === "INVALID_URI"){
                 msg.sendMessage("The URL you entered is invalid.");
             }else{
@@ -158,8 +157,8 @@ bot.on("message", msg => {
         gif (~gif <topic>)\n\
         urban (~urban <topic>)\n\
         echo (~echo <phrase>)\n\
-        shorten (~shorten <link>)
-        expand (~expand <bit.ly or j.mp link>)
+        shorten (~shorten <link>)\n\
+        expand (~expand <bit.ly or j.mp link>)\n\
         \n\
         Thanks for using SilverBot!```");
     }
