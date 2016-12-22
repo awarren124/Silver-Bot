@@ -64,7 +64,6 @@ bot.on("message", msg => {
         unirest.get("http://api.bit.ly/v3/shorten?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&longUrl=" + longURL)
         .header("Accept", "application/json")
         .end(function (result) {
-            console.log("http://api.bit.ly/v3/shorten?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&longUrl=" + longURL);
             if(result.body.status_txt === "INVALID_URI"){
                 msg.sendMessage("The URL you entered is invalid.");
             }else{
@@ -81,7 +80,6 @@ bot.on("message", msg => {
         unirest.get("http://api.bit.ly/v3/expand?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&shortUrl=" + shortURL)
         .header("Accept", "application/json")
         .end(function (result) {
-            console.log("http://api.bit.ly/v3/expand?format=json&login=" + authinfo.logins.bitly + "&apiKey=" + authinfo.keys.bitly + "&shortUrl=" + shortURL);
             if(result.body.data.expand[0].hasOwnProperty("error")){
                 msg.channel.sendMessage("The URL you entered is invalid. Make sure it starts with bit.ly, or j.mp")
             }else{
@@ -102,7 +100,6 @@ bot.on("message", msg => {
         .end(function (result) {
             if(result.body.list.length !== 0){
                 var index = -Math.floor(Math.random() * (0 - result.body.list.length + 1));
-                console.log(index);
                 msg.channel.sendMessage("**" + result.body.list[index].word + "** by " + result.body.list[index].author + "\n\n" +
                                         result.body.list[index].definition + "\n\n" +
                                         "*" + result.body.list[index].example + "*\n\n" +
@@ -133,6 +130,81 @@ bot.on("message", msg => {
         });
     }
 
+    if(mes.startsWith("meme")){
+        if(mes.substring(4).trim() === "list"){
+            msg.channel.sendMessage("List of background meme images:\n"
+                                    + "```one does not simply\n"
+                                    + "batman slapping robin\n"
+                                    + "the most interesting \n"
+                                    + "man in the world\n"
+                                    + "ancient aliens\n"
+                                    + "futurama fry\n"
+                                    + "first world problems\n"
+                                    + "bad luck brian\n"
+                                    + "doge\n"
+                                    + "grumpy cat\n"
+                                    + "y u no```");
+        }else{
+            var params = mes.substring(4).split("|");
+            for (var i = params.length - 1; i >= 0; i--) {
+                params[i] = params[i].trim();
+            };
+            var img = params[0];
+            var templateID
+            switch(img){
+                case "one does not simply":
+                    templateID = 61579;
+                    break;
+                case "batman slapping robin":
+                    templateID = 438680;
+                    break;
+                case "the most interesting man in the world":
+                    templateID = 61532;
+                    break;
+                case "ancient aliens":
+                    templateID = 101470;
+                    break;
+                case "futurama fry":
+                    templateID = 61520;
+                    break;
+                case "first world problems":
+                    templateID = 61539;
+                    break;
+                case "bad luck brian":
+                    templateID = 61585;
+                    break;
+                case "doge":
+                    templateID = 8072285;
+                    break;
+                case "grumpy cat":
+                    templateID = 405658;
+                    break;
+                case "y u no":
+                    templateID = 61527;
+                    break;
+            }
+            var formData = {
+                template_id : templateID,
+                username : authinfo.logins.imgflip.username,
+                password : authinfo.logins.imgflip.password,
+                text0 : params[1],
+                text1 : params[2]
+            };
+             
+            request.post("https://api.imgflip.com/caption_image", {
+                form : formData
+            }, function(error, response, body) {
+             
+                var meme = JSON.parse(body);
+             
+                if (!error && response.statusCode == 200) {
+                    msg.channel.sendMessage(meme.data.url);
+                }
+    
+            });
+        }
+    }
+
     if(mes ===  "fat"){
         msg.channel.sendMessage("esdesign");
     }
@@ -144,28 +216,23 @@ bot.on("message", msg => {
         msg.channel.sendMessage(msg.author.username + " rolled a " + Math.floor(Math.random() * (6 - 1 + 1) + 1));
     }
 
-    if(mes === "deletelastmsg"){
-        msg.delete()
-            .then(msg => console.log(`Deleted message from ${msg.author.username}`))
-            .catch(console.error);
-    }
-    
     if(mes === "help"){
-        msg.channel.sendMessage("```SilverBot was created by arocks124#9318\r\
-        to use, type ~ <command>\n\
-        Commands:\n\
-        fat\n\
-        uptime\n\
-        rtd\n\
-        weather (~weather <city>)\n\
-        gif (~gif <topic>)\n\
-        urban (~urban <topic>)\n\
-        echo (~echo <phrase>)\n\
-        shorten (~shorten <link>)\n\
-        expand (~expand <bit.ly or j.mp link>)\n\
-        movie (~movie <title>)\n\
-        \n\
-        Thanks for using SilverBot!```");
+        msg.channel.sendMessage("```SilverBot was created by arocks124#9318\n"
+            + "to use, type ~ <command>\n" +
+            + "Commands:\n"
+            + "fat\n"
+            + "uptime\n"
+            + "rtd\n"
+            + "weather (~weather <city>)\n"
+            + "gif (~gif <topic>)\n"
+            + "urban (~urban <topic>)\n"
+            + "echo (~echo <phrase>)\n"
+            + "shorten (~shorten <link>)\n"
+            + "expand (~expand <bit.ly or j.mp link>)\n"
+            + "movie (~movie <title>)\n"
+            + "meme (~meme <image> | <top text> | <bottom text>) (type ~meme list for list of available memes)\n"
+            + "\n"
+            + "Thanks for using SilverBot!```");
     }
 
     if(mes === "git"){
@@ -175,11 +242,11 @@ bot.on("message", msg => {
 });
 
 bot.on("guildMemberAdd", (member) => {
-    console.log(`New User "${member.user.username}" has joined "${member.guild.name}"` );
     member.guild.defaultChannel.sendMessage(`"${member.user.username}" has joined this server`);
 });
 
 bot.on('ready', () => {
     console.log('I am ready!');
+    bot.user.setGame("Type ~help for info");
 });
 bot.login(authinfo.keys.discord);
