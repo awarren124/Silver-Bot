@@ -12,8 +12,16 @@ bot.on("message", msg => {
     if (msg.author.username === "Silver Bot") return;
 
     if(!msg.content.startsWith(prefix)) return;
+    console.log(msg.channel);
 
-    console.log("message sent in " + msg.channel.guild.name + "\n\"" + msg.content + "\"\n");
+    if(msg.channel.type === "text"){
+        console.log("group message sent in " + msg.channel.guild.name + "\n\"" + msg.content + "\"\n");
+    }else if(msg.channel.type === "dm"){
+        console.log("private message sent in " + msg.author.username + "\n\"" + msg.content + "\"\n");
+    }else{
+        return;
+    }
+
     mes = msg.content.substring(1).trim().toLowerCase();
     if(mes.startsWith("weather")){
         var city = mes.substring(7).trim();
