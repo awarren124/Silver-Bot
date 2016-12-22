@@ -12,7 +12,6 @@ bot.on("message", msg => {
     if (msg.author.username === "Silver Bot") return;
 
     if(!msg.content.startsWith(prefix)) return;
-    console.log(msg.channel);
 
     if(msg.channel.type === "text"){
         console.log("group message sent in " + msg.channel.guild.name + "\n\"" + msg.content + "\"\n");
