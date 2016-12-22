@@ -146,62 +146,76 @@ bot.on("message", msg => {
                                     + "y u no```");
         }else{
             var params = mes.substring(4).split("|");
-            for (var i = params.length - 1; i >= 0; i--) {
-                params[i] = params[i].trim();
-            };
-            var img = params[0];
-            var templateID
-            switch(img){
-                case "one does not simply":
-                    templateID = 61579;
-                    break;
-                case "batman slapping robin":
-                    templateID = 438680;
-                    break;
-                case "the most interesting man in the world":
-                    templateID = 61532;
-                    break;
-                case "ancient aliens":
-                    templateID = 101470;
-                    break;
-                case "futurama fry":
-                    templateID = 61520;
-                    break;
-                case "first world problems":
-                    templateID = 61539;
-                    break;
-                case "bad luck brian":
-                    templateID = 61585;
-                    break;
-                case "doge":
-                    templateID = 8072285;
-                    break;
-                case "grumpy cat":
-                    templateID = 405658;
-                    break;
-                case "y u no":
-                    templateID = 61527;
-                    break;
-            }
-            var formData = {
-                template_id : templateID,
-                username : authinfo.logins.imgflip.username,
-                password : authinfo.logins.imgflip.password,
-                text0 : params[1],
-                text1 : params[2]
-            };
-             
-            request.post("https://api.imgflip.com/caption_image", {
-                form : formData
-            }, function(error, response, body) {
-             
-                var meme = JSON.parse(body);
-             
-                if (!error && response.statusCode == 200) {
-                    msg.channel.sendMessage(meme.data.url);
+            if(params.length == 3){
+                for (var i = params.length - 1; i >= 0; i--) {
+                    params[i] = params[i].trim();
+                };
+                var img = params[0];
+                var templateID
+                var matchingID = true;
+                switch(img){
+                    case "one does not simply":
+                        templateID = 61579;
+                        break;
+                    case "batman slapping robin":
+                        templateID = 438680;
+                        break;
+                    case "the most interesting man in the world":
+                        templateID = 61532;
+                        break;
+                    case "ancient aliens":
+                        templateID = 101470;
+                        break;
+                    case "futurama fry":
+                        templateID = 61520;
+                        break;
+                    case "first world problems":
+                        templateID = 61539;
+                        break;
+                    case "bad luck brian":
+                        templateID = 61585;
+                        break;
+                    case "doge":
+                        templateID = 8072285;
+                        break;
+                    case "grumpy cat":
+                        templateID = 405658;
+                        break;
+                    case "y u no":
+                        templateID = 61527;
+                        break;
+                    default:
+                        matchingID = false;
+                        break;
                 }
-    
-            });
+                if(matchingID){
+                    var formData = {
+                        template_id : templateID,
+                        username : authinfo.logins.imgflip.username,
+                        password : authinfo.logins.imgflip.password,
+                        text0 : params[1],
+                        text1 : params[2]
+                    };
+                     
+                    request.post("https://api.imgflip.com/caption_image", {
+                        form : formData
+                    }, function(error, response, body) {
+                     
+                        var meme = JSON.parse(body);
+                     
+                        if (!error && response.statusCode == 200) {
+                            msg.channel.sendMessage(meme.data.url);
+                        }else{
+                            msg.channel.sendMessage("Something went wrong.")
+                        }
+            
+                    });
+                }else{
+                    msg.channel.sendMessage("Image not found. Type ```~meme list``` to see a list of available images.");
+                }
+            }else{
+                msg.channel.sendMessage("Incorrect amount of parameters. Make sure to format it as\n```~meme <image> | <top text> | <bottom text>```");
+            }
         }
     }
 
