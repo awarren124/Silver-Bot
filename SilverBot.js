@@ -9,7 +9,6 @@ var unirest = require("unirest");
 bot.on("message", msg => {
 
     if(msg.author.bot) return;  
-    if (msg.author.username === "Silver Bot") return;
 
     if(!msg.content.startsWith(prefix)) return;
 
@@ -119,22 +118,38 @@ bot.on("message", msg => {
     }
 
     if(mes.startsWith("movie")){
-        var title = mes.substring(5).trim();
-        unirest.get("http://www.omdbapi.com/?t=" + title)
+        var titleAndYear = mes.substring(5).trim();
+        var params = titleAndYear.split("|")
+        for (var i = params.length - 1; i >= 0; i--) {
+            params[i] - params[i].length;
+        };
+        unirest.get("http://www.omdbapi.com/?t=" + params[0] + "&y=" + params[1])
         .end(function(result){
             if(result.body.Response === "True"){
-                msg.channel.sendMessage("**" + result.body.Title + "**, " + result.body.Year + "\n" +
-                result.body.Genre + "\nDirected by: " + result.body.Director + "\n" +
-                "Actors: " + result.body.Actors + "\n" +
-                "Plot: " + result.body.Plot + "\n" +
-                "Ratings: \n" +
-                "\tMetascore: " + result.body.Metascore + "\n" +
-                "\tIMDB: " + result.body.imdbRating  + "\n" +
-                result.body.Poster);
+                const embed = new Discord.RichEmbed()
+                .setTitle("**" + result.body.Title + "** (" + result.body.Year + ")")
+                .setAuthor('Silver Bot', bot.user.avatarURL)
+                .setColor(0x00AE86)
+                .setDescription(result.body.Plot)
+                .setFooter('Use ~help for help', bot.user.avatarURL)
+                .setImage(result.body.Poster)
+                .setTimestamp()
+                .setURL('http://www.imdb.com/title/' + result.body.imdbID)
+                .addField('Director', result.body.Director, true)
+                .addField('Ratings', "Metascore: " + result.body.Metascore + "\nIMDB: " + result.body.imdbRating, true)
+                .addField('Writer(s)', result.body.Writer, true)
+                .addField('Cast', result.body.Actors, true)
+                msg.channel.sendEmbed(
+                    embed,
+                    { disableEveryone: true }
+                );
             }else{
                 msg.channel.sendMessage("Movie not found :(");
             }
         });
+
+        
+
     }
 
     if(mes.startsWith("meme")){
@@ -250,7 +265,7 @@ bot.on("message", msg => {
             + "echo (~echo <phrase>)\n"
             + "shorten (~shorten <link>)\n"
             + "expand (~expand <bit.ly or j.mp link>)\n"
-            + "movie (~movie <title>)\n"
+            + "movie (~movie <title> | <year (optional)>)\n"
             + "meme (~meme <image> | <top text> | <bottom text>) (type ~meme list for list of available memes)\n"
             + "\n"
             + "Thanks for using SilverBot!```");
