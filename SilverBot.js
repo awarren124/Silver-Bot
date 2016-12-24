@@ -126,13 +126,19 @@ bot.on("message", msg => {
         unirest.get("http://www.omdbapi.com/?t=" + params[0] + "&y=" + params[1])
         .end(function(result){
             if(result.body.Response === "True"){
+                var poster;
+                if(result.body.Poster === "N/A"){
+                    poster = "";
+                }else{
+                    poster = result.body.Poster;
+                }
                 const embed = new Discord.RichEmbed()
                 .setTitle("**" + result.body.Title + "** (" + result.body.Year + ")")
                 .setAuthor('Silver Bot', bot.user.avatarURL)
                 .setColor(0x00AE86)
                 .setDescription(result.body.Plot)
                 .setFooter('Use ~help for help', bot.user.avatarURL)
-                .setImage(result.body.Poster)
+                .setImage(poster)
                 .setTimestamp()
                 .setURL('http://www.imdb.com/title/' + result.body.imdbID)
                 .addField('Director', result.body.Director, true)
