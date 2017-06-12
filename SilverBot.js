@@ -118,6 +118,10 @@ bot.on("message", msg => {
     }
 
     if(mes.startsWith("movie")){
+
+        msg.channel.sendMessage("The API I used became paid only :( movies will no longer work");
+
+        /*
         var titleAndYear = mes.substring(5).trim();
         var params = titleAndYear.split("|")
         for (var i = params.length - 1; i >= 0; i--) {
@@ -152,7 +156,7 @@ bot.on("message", msg => {
             }else{
                 msg.channel.sendMessage("Movie not found :(");
             }
-        });
+        });*/
 
         
 
@@ -279,6 +283,27 @@ bot.on("message", msg => {
 
     if(mes === "git"){
         msg.channel.sendMessage("GitHub: https://github.com/awarren124/Silver-Bot");
+    }
+
+    if(mes.startsWith("info")){
+        for (var i = 0; i <msg.mentions.users.array().length; i++) {
+            user = msg.mentions.users.array()[i];
+            console.log(user.createdAt);
+            year = user.createdAt.toString().substring(0, 4);
+            month = user.createdAt.toString().substring(5, 7);
+            day = user.createdAt.toString().substring(8, 10);
+            const embed = new Discord.RichEmbed()
+                .setTitle(user.username + "#" + user.discriminator)
+                .setThumbnail(user.avatarURL)
+                .setColor(0x00AE86)
+                .addField('Created on: ' + month + "/" + day + "/" + year)
+                .setFooter('Use ~help for help', bot.user.avatarURL)
+                .setTimestamp()
+                msg.channel.sendEmbed(
+                    embed,
+                    { disableEveryone: true }
+                );
+        }
     }
     
 });
