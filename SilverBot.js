@@ -118,16 +118,13 @@ bot.on("message", msg => {
     }
 
     if(mes.startsWith("movie")){
-
-        msg.channel.sendMessage("The API I used became paid only :( movies will no longer work");
-
-        /*
+        
         var titleAndYear = mes.substring(5).trim();
         var params = titleAndYear.split("|")
         for (var i = params.length - 1; i >= 0; i--) {
             params[i] - params[i].length;
         };
-        unirest.get("http://www.omdbapi.com/?t=" + params[0] + "&y=" + params[1])
+        unirest.get("http://www.omdbapi.com/?t=" + params[0] + "&y=" + params[1] + "&apikey=" + authinfo.keys.omdb)
         .end(function(result){
             if(result.body.Response === "True"){
                 var poster;
@@ -156,7 +153,7 @@ bot.on("message", msg => {
             }else{
                 msg.channel.sendMessage("Movie not found :(");
             }
-        });*/
+        });
 
         
 
